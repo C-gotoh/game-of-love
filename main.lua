@@ -63,10 +63,10 @@ end
 
 local function buildField()
     local w, h = love.graphics.getDimensions()
-    Field = love.image.newImageData(w / 4, h / 4)
+    Field = love.image.newImageData(w / Scale, h / Scale)
     print('created with ', w / 2, h / 2)
-    for i = 0, (w / 4) - 1 do
-        for j = 0, (h / 4) - 1 do
+    for i = 0, (w / Scale) - 1 do
+        for j = 0, (h / Scale) - 1 do
             local alive = math.random() > 0.7
             if alive then setAlive(i, j) end
         end
@@ -79,13 +79,14 @@ function love.load()
     Shader = love.graphics.newShader("glow.glsl")
     love.graphics.setDefaultFilter('linear', 'nearest', 0)
     -- init field
-    Field = buildField()
     RefreshRate = 0.1
     Paused = false
     Fps = 0
     Cooldown = 0
     Debug = true
     Shading = false
+    Scale = 2
+    Field = buildField()
 end
 
 function love.keypressed(key, scancode, isrepeat)
@@ -97,13 +98,15 @@ function love.keypressed(key, scancode, isrepeat)
     if key == "space" then Paused = not Paused end
     if key == "d" then Debug = not Debug end
     if key == "s" then Shading = not Shading end
+    if key == "2" then Scale = 2 end
+    if key == "4" then Scale = 4 end
 end
 
 function love.mousepressed(x, y, button, istouch)
     if button == 1 then
         print('set pixel', x, y)
-        print('field coordinate', x / 4, y / 4)
-        setAlive(math.floor(x / 4), math.floor(y / 4))
+        print('field coordinate', x / Scale, y / Scale)
+        setAlive(math.floor(x / Scale), math.floor(y / Scale))
     end
     if button == 2 then Paused = not Paused end
 end
@@ -125,7 +128,7 @@ function love.draw()
     if Debug then love.graphics.print(Fps, 10, 10) end
     if Shading then love.graphics.setShader(Shader) end
     love.graphics.setColor(1, 1, 1);
-    love.graphics.draw(Image, 0, 0, 0, 6, 6)
+    love.graphics.draw(Image, 0, 0, 0, Scale, Scale)
     love.graphics.setShader()
 end
 
